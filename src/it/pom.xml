@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>@project.groupId@</groupId>
+    <artifactId>@project.artifactId@-it</artifactId>
+    <version>IT-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>@java.version@</maven.compiler.source>
+        <maven.compiler.target>@java.version@</maven.compiler.target>
+        <docker.registry>127.0.0.1</docker.registry>
+        <oras.skip>false</oras.skip>
+        <maven.compiler.version>@maven.compiler.version@</maven.compiler.version>
+        <maven.deploy.version>@maven.deploy.version@</maven.deploy.version>
+        <maven.resource.version>@maven.resource.version@</maven.resource.version>
+        <maven.surefire.version>@maven.surefire.version@</maven.surefire.version>
+        <oras.version>@project.version@</oras.version>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven.deploy.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven.resource.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.tosan.plugin</groupId>
+                    <artifactId>oras-maven-plugin</artifactId>
+                    <version>${oras.version}</version>
+                    <configuration>
+                        <stableRepository>
+                            <name>registry-in-setting</name>
+                            <url>${docker.registry}/oras</url>
+                        </stableRepository>
+                        <snapshotRepository>
+                            <name>registry-in-setting</name>
+                            <url>${docker.registry}/oras</url>
+                        </snapshotRepository>
+                        <skip>${oras.skip}</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
