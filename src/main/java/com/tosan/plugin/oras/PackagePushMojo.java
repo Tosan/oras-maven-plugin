@@ -22,8 +22,7 @@ import java.nio.file.Paths;
 @Mojo(name = "package-push", defaultPhase = LifecyclePhase.DEPLOY, threadSafe = true)
 @Setter
 public class PackagePushMojo extends AbstractOrasMojo {
-    private Compression compression;
-
+    private static final Compression compression = new Compression();
     @Parameter(property = "oras.push.skip", defaultValue = "false")
     private boolean skipPush;
 
