@@ -262,7 +262,7 @@
                 <repository>
                     <id>github</id>
                     <name>GitHub</name>
-                    <url>https://maven.pkg.github.com/Tosan/tosan-httpclient-spring-boot-starter</url>
+                    <url>https://maven.pkg.github.com/Tosan/oras-maven-plugin</url>
                 </repository>
             </distributionManagement>
         </profile>
