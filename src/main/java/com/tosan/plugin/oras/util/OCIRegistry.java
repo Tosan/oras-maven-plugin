@@ -36,4 +36,13 @@ public class OCIRegistry {
     @Parameter(property = "oci.repo.password")
     @ToString.Exclude
     private String password;
+
+    /**
+     * For set ociRegistry when using the plugin just in command-line and without defining in the project's pom.
+     *
+     * @param url oci registry url
+     */
+    public void set(String url) {
+        setUrl(url);
+    }
 }

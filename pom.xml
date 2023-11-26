@@ -4,7 +4,7 @@
 
     <groupId>com.tosan.plugin</groupId>
     <artifactId>oras-maven-plugin</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Oras Maven Plugin</name>
@@ -52,13 +52,13 @@
         <!-- dependencies -->
         <maven.version>3.8.6</maven.version>
         <maven.plugin.version>3.6.4</maven.plugin.version>
-        <junit.version>5.9.0</junit.version>
+        <junit.version>5.9.3</junit.version>
 
         <!-- plugins -->
-        <maven.compiler.version>3.10.1</maven.compiler.version>
-        <maven.deploy.version>3.0.0</maven.deploy.version>
-        <maven.resource.version>3.3.0</maven.resource.version>
-        <maven.surefire.version>3.0.0-M6</maven.surefire.version>
+        <maven.compiler.version>3.11.0</maven.compiler.version>
+        <maven.deploy.version>3.1.1</maven.deploy.version>
+        <maven.resource.version>3.3.1</maven.resource.version>
+        <maven.surefire.version>3.1.2</maven.surefire.version>
     </properties>
 
     <dependencies>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
 
@@ -123,7 +123,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>4.7.0</version>
+            <version>5.3.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -162,12 +162,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -194,9 +194,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.5.0</version>
                     <configuration>
                         <detectJavaApiLink>false</detectJavaApiLink>
+                        <doclint>none</doclint>
                     </configuration>
                     <executions>
                         <execution>
@@ -210,7 +211,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M6</version>
+                    <version>3.0.1</version>
                     <configuration>
                         <tagNameFormat>v@{project.version}</tagNameFormat>
                         <releaseProfiles>release</releaseProfiles>
