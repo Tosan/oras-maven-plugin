@@ -43,6 +43,6 @@ public class PushMojo extends AbstractOrasMojo {
 
     private void upload(OCIRegistry registry, String artifacts) throws MojoExecutionException {
         getLog().debug("Uploading to " + registry.getUrl());
-        oras(String.format(PUSH_TEMPLATE, registry.getUrl(), getUploadName(), getUploadVersion(), artifacts), "Upload failed");
+        oras("push", String.format(PUSH_TEMPLATE, registry.getUrl(), getUploadName(), getUploadVersion(), artifacts), "Upload failed");
     }
 }

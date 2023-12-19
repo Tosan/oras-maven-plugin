@@ -56,6 +56,6 @@ public class PackagePushMojo extends AbstractOrasMojo {
     private void uploadArchive(OCIRegistry registry, String archiveDirectory, String archiveFile) throws MojoExecutionException {
         getLog().debug("Uploading to " + registry.getUrl());
         setWorkingDirectory(archiveDirectory);
-        oras(String.format(PUSH_TEMPLATE, registry.getUrl(), getUploadName(), getUploadVersion(), archiveFile), "Upload failed");
+        oras("push", String.format(PUSH_TEMPLATE, registry.getUrl(), getUploadName(), getUploadVersion(), archiveFile), "Upload failed");
     }
 }

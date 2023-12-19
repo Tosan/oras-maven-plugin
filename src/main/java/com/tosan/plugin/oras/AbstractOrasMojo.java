@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 @Setter
 public abstract class AbstractOrasMojo extends AbstractMojo {
     protected static final String LOGIN_TEMPLATE = "registry login -u %s %s --password-stdin";
-    protected static final String PUSH_TEMPLATE = "push %s/%s:%s %s";
+    protected static final String PUSH_TEMPLATE = "%s/%s:%s %s";
 
     private final Clock clock = Clock.systemDefaultZone();
 
@@ -57,6 +57,9 @@ public abstract class AbstractOrasMojo extends AbstractMojo {
 
     @Parameter(property = "oras.artifacts", required = true)
     private String[] artifacts;
+
+    @Parameter(property = "oras.artifactType")
+    private String artifactType;
 
     @Parameter(property = "oras.excludes")
     private String[] excludes;
@@ -85,15 +88,6 @@ public abstract class AbstractOrasMojo extends AbstractMojo {
     @Parameter(property = "oci.snapshot")
     private OCIRegistry snapshotRepository;
 
-    @Parameter(property = "oci.registryConfig")
-    private String registryConfig;
-
-    @Parameter(property = "oci.repositoryCache")
-    private String repositoryCache;
-
-    @Parameter(property = "oci.repositoryConfig")
-    private String repositoryConfig;
-
     @Parameter(property = "oci.security", defaultValue = "~/.m2/settings-security.xml")
     private String ociSecurity;
 
@@ -102,6 +96,15 @@ public abstract class AbstractOrasMojo extends AbstractMojo {
 
     @Parameter(property = "oras.skip", defaultValue = "false")
     protected boolean skip;
+
+    @Parameter(property = "oras.debug", defaultValue = "false")
+    private boolean debug;
+
+    @Parameter(property = "oras.verbose", defaultValue = "false")
+    private boolean verbose;
+
+    @Parameter(property = "oras.insecure", defaultValue = "false")
+    private boolean insecure;
 
     @Parameter(defaultValue = "${settings}", readonly = true)
     private Settings settings;
@@ -125,6 +128,31 @@ public abstract class AbstractOrasMojo extends AbstractMojo {
         }
 
         return path.orElseThrow(() -> new MojoExecutionException("Oras executable is not found."));
+    }
+
+    private String getCommandFlags(String command) {
+        String flags = "";
+
+        //common flags:
+        if (debug) {
+            flags += " --debug";
+        }
+        if (verbose) {
+            flags += " --verbose";
+        }
+        if (insecure) {
+            flags += " --insecure";
+        }
+
+        //push flags:
+        if (command.equals("push")) {
+            if (StringUtils.isNotEmpty(artifactType)) {
+                flags += " --artifact-type " + artifactType;
+            }
+
+        }
+
+        return flags;
     }
 
     /**
@@ -158,27 +186,18 @@ public abstract class AbstractOrasMojo extends AbstractMojo {
         }
     }
 
-    void oras(String arguments, String errorMessage) throws MojoExecutionException {
-        oras(arguments, errorMessage, null);
+    void oras(String command, String arguments, String errorMessage) throws MojoExecutionException {
+        oras(command, arguments, errorMessage, null);
     }
 
-    void oras(String arguments, String errorMessage, String stdin) throws MojoExecutionException {
-        String command = getOrasExecutablePath() + " " + arguments;
-        if (StringUtils.isNotEmpty(registryConfig)) {
-            command += " --registry-config=" + registryConfig;
-        }
-        if (StringUtils.isNotEmpty(repositoryConfig)) {
-            command += " --repository-config=" + repositoryConfig;
-        }
-        if (StringUtils.isNotEmpty(repositoryCache)) {
-            command += " --repository-cache=" + repositoryCache;
-        }
+    void oras(String command, String arguments, String errorMessage, String stdin) throws MojoExecutionException {
+        String fullCommand = getOrasExecutablePath() + " " + command + " " + getCommandFlags(command) + " " + arguments;
 
         // execute oras
-        getLog().debug(command);
+        getLog().debug(fullCommand);
         int exitValue;
         try {
-            Process p = Runtime.getRuntime().exec(command, null, new File(getWorkingDirectory()));
+            Process p = Runtime.getRuntime().exec(fullCommand, null, new File(getWorkingDirectory()));
             new Thread(() -> {
                 if (StringUtils.isNotEmpty(stdin)) {
                     try (OutputStream outputStream = p.getOutputStream()) {
@@ -212,7 +231,7 @@ public abstract class AbstractOrasMojo extends AbstractMojo {
             p.waitFor();
             exitValue = p.exitValue();
         } catch (Exception e) {
-            getLog().error("Error processing command [" + command + "]", e);
+            getLog().error("Error processing command [" + fullCommand + "]", e);
             throw new MojoExecutionException("Error processing command", e);
         }
 
