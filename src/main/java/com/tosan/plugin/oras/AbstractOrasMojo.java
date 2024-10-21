@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 public abstract class AbstractOrasMojo extends AbstractMojo {
-    protected static final String LOGIN_TEMPLATE = "registry login -u %s %s --password-stdin";
+    protected static final String LOGIN_TEMPLATE = "login -u %s %s --password-stdin";
     protected static final String PUSH_TEMPLATE = "%s/%s:%s %s";
 
     private final Clock clock = Clock.systemDefaultZone();
@@ -299,7 +299,7 @@ public abstract class AbstractOrasMojo extends AbstractMojo {
         PasswordAuthentication authentication = getAuthentication(registry);
         if (authentication != null) {
             String arguments = String.format(LOGIN_TEMPLATE, authentication.getUserName(), registry.getUrl());
-            oras(arguments, "can't login to registry", new String(authentication.getPassword()));
+            oras(arguments, "", "can't login to registry", new String(authentication.getPassword()));
         }
     }
 
