@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 public abstract class AbstractOrasMojo extends AbstractMojo {
-    protected static final String LOGIN_TEMPLATE = "login -u %s %s --password-stdin";
+    protected static final String LOGIN_TEMPLATE = "-u %s %s --password-stdin";
     protected static final String PUSH_TEMPLATE = "%s/%s:%s %s";
 
     private final Clock clock = Clock.systemDefaultZone();
@@ -298,8 +298,30 @@ public abstract class AbstractOrasMojo extends AbstractMojo {
     void authenticate(OCIRegistry registry) throws MojoExecutionException {
         PasswordAuthentication authentication = getAuthentication(registry);
         if (authentication != null) {
-            String arguments = String.format(LOGIN_TEMPLATE, authentication.getUserName(), registry.getUrl());
-            oras(arguments, "", "can't login to registry", new String(authentication.getPassword()));
+            String loginUrl = removePathFromUrl(registry.getUrl());
+            String arguments = String.format(LOGIN_TEMPLATE, authentication.getUserName(), loginUrl);
+            oras("login", arguments, "Can't login to registry", new String(authentication.getPassword()));
+        }
+    }
+
+    private String removePathFromUrl(String urlString) {
+        try {
+            // Check if the URL contains a protocol (e.g., "https://")
+            int startIndex = 0;
+            if (urlString.contains("://")) {
+                startIndex = urlString.indexOf("://") + 3; // Skip past "://"
+            }
+            // Find the first "/" after the domain or host
+            int domainEndIndex = urlString.indexOf("/", startIndex);
+            // If no context path is found, return the original URL
+            if (domainEndIndex == -1) {
+                return urlString;
+            }
+            // Remove the context path by trimming everything after the domain/host
+            return urlString.substring(0, domainEndIndex);
+        } catch (Exception e) {
+            getLog().warn(e.getMessage(), e);
+            return urlString;
         }
     }
 
